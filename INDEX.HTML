@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اختبار تقنية المعلومات - الصف الثالث ثانوي</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), #1e40af);
+      color: white;
+      padding: 20px 28px;
+      text-align: center;
+    }
+
+    header h1 { font-size: 20px; font-weight: 800; }
+    header p { font-size: 14px; opacity: 0.9; margin-top: 4px; }
+
+    .meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #eff6ff;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--primary);
+    }
+
+    .progress-container {
+      width: 100%;
+      background: #e2e8f0;
+      height: 6px;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: var(--primary-light);
+      transition: width 0.3s ease;
+    }
+
+    .form-body { padding: 28px; }
+
+    .exam-page { display: none; }
+    .exam-page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .student-info-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label { font-weight: 700; font-size: 14px; }
+    .input-group input, .input-group select, .input-group textarea {
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      background: white;
+    }
+
+    .q-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .q-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .q-title { font-weight: 700; font-size: 17px; color: #0f172a; }
+    .q-points {
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .options-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-label:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .option-label input[type="radio"] { width: 18px; height: 18px; accent-color: var(--primary); }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary { background: #e2e8f0; color: #334155; }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #15803d; }
+
+    .result-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.75);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .result-content {
+      background: white;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .score-circle {
+      min-width: 140px;
+      padding: 12px 20px;
+      border-radius: 50px;
+      background: #eff6ff;
+      border: 4px solid var(--primary);
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 16px auto;
+    }
+
+    .score-num { font-size: 32px; font-weight: 800; color: var(--primary); line-height: 1.2; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>اختبار تقنية المعلومات (Visual Basic 6.0)</h1>
+      <p>الصف الثالث ثانوي علمي - إعداد: معلمة المادة</p>
+    </header>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="meta-bar">
+      <div id="pageIndicator">الصفحة التعريفية</div>
+      <div><i class="fa-regular fa-clock"></i> <span id="timer">30:00</span></div>
+    </div>
+
+    <form id="examForm" name="quiz-form" data-netlify="true" class="form-body" onsubmit="event.preventDefault();">
+      
+      <!-- Page 0: Student Info -->
+      <div class="exam-page active" id="page0">
+        <h3 style="margin-bottom: 16px; color: var(--primary);">البيانات الشخصية</h3>
+        <div class="student-info-grid">
+          <div class="input-group">
+            <label for="studentName">اسم الطالبة ثلاثياً:</label>
+            <input type="text" id="studentName" name="studentName" required placeholder="أدخلي اسمك الكامل">
+          </div>
+          <div class="input-group">
+            <label for="studentClass">الفصل:</label>
+            <select id="studentClass" name="studentClass" required>
+              <option value="">اختر الفصل...</option>
+              <option value="ثالثة أول">ثالثة أول</option>
+              <option value="ثالثة ثاني">ثالثة ثاني</option>
+              <option value="ثالثة ثالث">ثالثة ثالث</option>
+              <option value="ثالثة رابع">ثالثة رابع</option>
+            </select>
+          </div>
+        </div>
+        <div class="nav-buttons" style="justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn btn-primary" onclick="startExam()">ابدأي الاختبار <i class="fa-solid fa-arrow-left"></i></button>
+        </div>
+      </div>
+
+      <!-- Q1 -->
+      <div class="exam-page" id="page1">
+        <div class="q-card">
+          <div class="q-header">
+            <div class="q-title">1. يُعد اختيار النوع (Standard EXE) عند بداية مشروع جديد بفيجوال بيسك خياراً تلقائياً.</div>
+            <div class="q-points">3 درجات</div>
+          </div>
+          <div class="options-list">
+            <label class="option-label"><input type="radio" name="q1" value="true"> صواب</label>
+            <label class="option-label"><input type="radio" name="q1" value="false"> خطأ</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="exam-page" id="page2">
+        <div class="q-card">
+          <div class="q-header">
+            <div class="q-title">2. الأداة المسؤولة عن تجميع العناصر المترابطة منطقياً أو وظيفياً هي:</div>
+            <div class="q-points">3 درجات</div>
+          </div>
+          <div class="options-list">
+            <label class="option-label"><input type="radio" name="q2" value="label"> أداة العنوان (Label)</label>
+            <label class="option-label"><input type="radio" name="q2" value="frame"> أداة الإطار (Frame)</label>
+            <label class="option-label"><input type="radio" name="q2" value="textbox"> أداة صندوق النص (TextBox)</label>
+            <label class="option-label"><input type="radio" name="q2" value="command"> أداة زر الأوامر (Command Button)</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="exam-page" id="page3">
+        <div class="q-card">
+          <div class="q-header">
+            <div class="q-title">3. للتحكم في ظهور أو إخفاء أداة تحكم معينة، نستخدم الخاصية:</div>
+            <div class="q-points">3 درجات</div>
+          </div>
+          <div class="options-list">
+            <label class="option-label"><input type="radio" name="q3" value="caption"> Caption</label>
+            <label class="option-label"><input type="radio" name="q3" value="name"> Name</label>
+            <label class="option-label"><input type="radio" name="q3" value="visible"> Visible</label>
+            <label class="option-label"><input type="radio" name="q3" value="backcolor"> BackColor</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="exam-page" id="page4">
+        <div class="q-card">
+          <div class="q-header">
+            <div class="q-title">4. أول وأهم مرحلة في خطوات حل المسألة باستخدام الحاسوب هي:</div>
+            <div class="q-points">3 درجات</div>
+          </div>
+          <div class="options-list">
+            <label class="option-label"><input type="radio" name="q4" value="algorithm"> كتابة الخوارزميات</label>
+            <label class="option-label"><input type="radio" name="q4" value="problem_def"> تعريف وفهم المشكلة</label>
+            <label class="option-label"><input type="radio" name="q4" value="testing"> المراجعة والتصحيح</label>
+            <label class="option-label"><input type="radio" name="q4" value="coding"> تنفيذ الحل برمجياً</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="exam-page" id="page5">
+        <div class="q-card">
+          <div class="q-header">
+            <div class="q-title">5. تُعرَّض قائمة الخصائص بترتيب أبجدي دائماً باستثناء خاصية واحدة تأتي في البداية وهي:</div>
+            <div class="q-points">3 درجات</div>
+          </div>
+          <div class="options-list">
+            <label class="option-label"><input type="radio" name="q5" value="font"> Font</label>
+            <label class="option-label"><input type="radio" name="q5" value="name"> Name</label>
+            <label class="option-label"><input type="radio" name="q5" value="text"> Text</label>
+            <label class="option-label"><input type="radio" name="q5" value="left"> Left</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="exam-page" id="page6">
+        <div class="q-card">
+          <div class="q-header">
+            <div class="q-title">6. أداة تحكّم تمكّن من اختيار بدائل من قائمة منسدلة أو إدخال قيمة جديدة:</div>
+            <div class="q-points">3 درجات</div>
+          </div>
+          <div class="options-list">
+            <label class="option-label"><input type="radio" name="q6" value="listbox"> أداة ListBox</label>
+            <label class="option-label"><input type="radio" name="q6" value="combobox"> أداة ComboBox</label>
+            <label class="option-label"><input type="radio" name="q6" value="optionbutton"> أداة OptionButton</label>
+            <label class="option-label"><input type="radio" name="q6" value="checkbox"> أداة CheckBox</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="exam-page" id="page7">
+        <div class="q-card">
+          <div class="q-header">
+            <div class="q-title">7. عند كتابة الكلمة البرمجية (PRENT) بدلاً من (PRINT)، فإن الخطأ الناتج يُصنف كـ:</div>
+            <div class="q-points">3 درجات</div>
+          </div>
+          <div class="options-list">
+            <label class="option-label"><input type="radio" name="q7" value="syntax"> خطأ نحوي (Syntax Error)</label>
+            <label class="option-label"><input type="radio" name="q7" value="spelling"> خطأ لغوي (Spelling Error)</label>
+            <label class="option-label"><input type="radio" name="q7" value="logical"> خطأ منطقي (Logical Error)</label>
+            <label class="option-label"><input type="radio" name="q7" value="runtime"> خطأ أثناء التشغيل (Runtime Error)</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="exam-page" id="page8">
+        <div class="q-card">
+          <div class="q-header">
+            <div class="q-title">8. النافذة التي تعطي فكرة عن مكان ظهور النموذج على الشاشة عند التنفيذ هي:</div>
+            <div class="q-points">3 درجات</div>
+          </div>
+          <div class="options-list">
+            <label class="option-label"><input type="radio" name="q8" value="project_exp"> نافذة مستكشف المشروع</label>
+            <label class="option-label"><input type="radio" name="q8" value="properties"> نافذة الخصائص</label>
+            <label class="option-label"><input type="radio" name="q8" value="form_layout"> نافذة شكل النموذج (Form Layout)</label>
+            <label class="option-label"><input type="radio" name="q8" value="toolbox"> شريط أدوات التحكم</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="exam-page" id="page9">
+        <div class="q-card">
+          <div class="q-header">
+            <div class="q-title">9. قارني بين أداة صندوق الصور (PictureBox) وأداة الصور (Image) من حيث الخصائص والأداء.</div>
+            <div class="q-points">3 درجات</div>
+          </div>
+          <div class="input-group">
+            <textarea id="q9" name="q9" rows="4" placeholder="أكتبي الإجابة هنا..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="exam-page" id="page10">
+        <div class="q-card">
+          <div class="q-header">
+            <div class="q-title">10. اذكري خطوات تحديد "نافذة بدء التشغيل" (Startup Object) لمشروع متعدد النماذج.</div>
+            <div class="q-points">3 درجات</div>
+          </div>
+          <div class="input-group">
+            <textarea id="q10" name="q10" rows="4" placeholder="أكتبي الأوامر والخطوات متتابعة..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons Footer -->
+      <div class="nav-buttons" id="navFooter" style="display: none;">
+        <button type="button" class="btn btn-secondary" id="btnPrev" onclick="changePage(-1)"><i class="fa-solid fa-arrow-right"></i> السابق</button>
+        <button type="button" class="btn btn-primary" id="btnNext" onclick="changePage(1)">التالي <i class="fa-solid fa-arrow-left"></i></button>
+        <button type="button" class="btn btn-success" id="btnSubmit" style="display: none;" onclick="submitExam()"><i class="fa-solid fa-check"></i> تسليم الاختبار</button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Result Modal -->
+  <div class="result-modal" id="resultModal">
+    <div class="result-content">
+      <h2 style="color: var(--primary);">نتيجة الاختبار</h2>
+      <p id="resStudentDetails" style="color: #64748b; margin-top: 4px;"></p>
+
+      <div class="score-circle">
+        <span class="score-num" id="resScore">0 / 30</span>
+      </div>
+
+      <p style="font-size: 13px; color: #64748b; background: #f8fafc; padding: 10px; border-radius: 8px;">
+        * ملاحظة: النتيجة الظاهرة أعلاه هي للأسئلة الموضوعية (من 24 درجة)، والباقي (6 درجات) للأسئلة المقالية تتطلب مراجعة المعلمة.
+      </p>
+
+      <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة النتيجة</button>
+      </div>
+      <p style="margin-top: 16px; font-size: 13px; color: #dc2626; font-weight: 700;">
+        <i class="fa-solid fa-lock"></i> تم تقديم الاختبار بنجاح ولا يمكن إعادته من هذا الجهاز.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    let currentPage = 0;
+    const totalPages = 10;
+    const correctAnswers = {
+      q1: "true", q2: "frame", q3: "visible", q4: "problem_def",
+      q5: "name", q6: "combobox", q7: "spelling", q8: "form_layout"
+    };
+
+    // فحص الإرسال السابق لحجب إعادة الاختبار
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('vb_quiz_submitted') === 'true') {
+        const savedName = localStorage.getItem('vb_student_name') || "";
+        const savedClass = localStorage.getItem('vb_student_class') || "";
+        const savedScore = localStorage.getItem('vb_student_score') || "0";
+        
+        document.getElementById('resStudentDetails').innerText = `الطالبة: ${savedName} | الفصل: ${savedClass}`;
+        document.getElementById('resScore').innerText = `${savedScore} / 30`;
+        document.getElementById('resultModal').style.display = 'flex';
+      }
+    });
+
+    function startExam() {
+      const name = document.getElementById('studentName').value;
+      const cls = document.getElementById('studentClass').value;
+      if (!name || !cls) {
+        alert('الرجاء كتابة الاسم واختيار الفصل أولاً.');
+        return;
+      }
+      document.getElementById('navFooter').style.display = 'flex';
+      changePage(1);
+      startTimer();
+    }
+
+    function updatePageUI() {
+      document.querySelectorAll('.exam-page').forEach((page, idx) => {
+        page.classList.toggle('active', idx === currentPage);
+      });
+
+      const progress = (currentPage / totalPages) * 100;
+      document.getElementById('progressBar').style.width = `${progress}%`;
+      
+      if(currentPage > 0) {
+        document.getElementById('pageIndicator').innerText = `السؤال ${currentPage} من ${totalPages}`;
+      }
+
+      document.getElementById('btnPrev').style.visibility = currentPage <= 1 ? 'hidden' : 'visible';
+      
+      if (currentPage === totalPages) {
+        document.getElementById('btnNext').style.display = 'none';
+        document.getElementById('btnSubmit').style.display = 'flex';
+      } else {
+        document.getElementById('btnNext').style.display = 'flex';
+        document.getElementById('btnSubmit').style.display = 'none';
+      }
+    }
+
+    function changePage(delta) {
+      currentPage += delta;
+      if (currentPage < 0) currentPage = 0;
+      if (currentPage > totalPages) currentPage = totalPages;
+      updatePageUI();
+    }
+
+    let timeLeft = 30 * 60;
+    let timerInterval = null;
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        let mins = Math.floor(timeLeft / 60);
+        let secs = timeLeft % 60;
+        document.getElementById('timer').textContent = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          submitExam();
+        }
+        timeLeft--;
+      }, 1000);
+    }
+
+    function submitExam() {
+      if (timerInterval) clearInterval(timerInterval);
+
+      let score = 0;
+      for (let i = 1; i <= 8; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selected && selected.value === correctAnswers[`q${i}`]) {
+          score += 3;
+        }
+      }
+
+      const name = document.getElementById('studentName').value;
+      const cls = document.getElementById('studentClass').value;
+      const q9 = document.getElementById('q9').value;
+      const q10 = document.getElementById('q10').value;
+
+      // حفظ الحالة لمنع التكرار
+      localStorage.setItem('vb_quiz_submitted', 'true');
+      localStorage.setItem('vb_student_name', name);
+      localStorage.setItem('vb_student_class', cls);
+      localStorage.setItem('vb_student_score', score);
+
+      document.getElementById('resStudentDetails').innerText = `الطالبة: ${name} | الفصل: ${cls}`;
+      document.getElementById('resScore').innerText = `${score} / 30`;
+      document.getElementById('resultModal').style.display = 'flex';
+
+      // ==========================================
+      // رابط الربط المباشر مع GOOGLE SHEETS
+      // ==========================================
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbz1YauMSr33ElN7XU6qKcg0BSFznaUnMipTTPq7WkWzAF1KGgtAeE333FLiYx10D5g1/exec';
+      
+      const formData = new FormData();
+      formData.append('studentName', name);
+      formData.append('studentClass', cls);
+      formData.append('finalScore', score + " / 24 (موضوعي)");
+      formData.append('q9', q9);
+      formData.append('q10', q10);
+
+      fetch(scriptURL, { method: 'POST', body: formData })
+        .then(response => console.log('تم الإرسال لجدول جوجل بنجاح!'))
+        .catch(error => console.error('خطأ في الإرسال:', error));
+
+      // إرسال كنسخة احتياطية إلى Netlify Forms
+      const form = document.getElementById('examForm');
+      const netlifyData = new FormData(form);
+      netlifyData.append('finalScore', score + " / 24");
+      fetch('/', {
+        method: 'POST',
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(netlifyData).toString()
+      }).catch(err => console.log(err));
+    }
+  </script>
+</body>
+</html>
